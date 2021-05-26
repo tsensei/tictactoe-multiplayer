@@ -2,15 +2,18 @@
 const socket = io("http://localhost:8080");
 
 //Unique player number
-let playerNumber;
+var playerNumber, currentTurn;
+let boardState = [];
 
 //Response on Socket Event
 socket.on("init", (number) => {
   playerNumber = number;
 });
 socket.on("gameCode", handleGameCode);
+socket.on("xoturn", handlexoturn);
 socket.on("unknownGame", handleUnknownGame);
 socket.on("tooManyPlayers", handleTooManyPlayers);
+socket.on("boardState", handleBoardState);
 
 //Reference to DOM objects
 const loginContainer = document.getElementById("login-container");
@@ -20,6 +23,7 @@ const newBtn = document.getElementById("newGameButton");
 const joinCodeInput = document.getElementById("joinCode");
 const joinBtn = document.getElementById("joinGameButton");
 const gameCodeDisplay = document.getElementById("gameCodeDisplay");
+const boardCells = document.querySelectorAll(".board-cell");
 
 //Initialize game when button clicked
 newBtn.addEventListener("click", () => {
@@ -35,9 +39,11 @@ joinBtn.addEventListener("click", () => {
 
 //Initialization function
 function init() {
+  boardState = [];
   gameCodeDisplay.innerText = "";
   loginContainer.style.display = "none";
   gameContainer.style.display = "flex";
+  initializeGame();
 }
 
 function initializeGame() {
@@ -55,13 +61,61 @@ function initializeGame() {
     cell.addEventListener(
       "click",
       () => {
-        fillCell(cell, index);
+        validateClickSendRes(index);
       },
       { once: true }
     );
   });
+}
 
-  currentTurn = Math.round(Math.random(0, 1)) ? "X" : "O";
+function validateClickSendRes(index) {
+  if (currentTurn != undefined) {
+    if (playerNumber == currentTurn) {
+      socket.emit("turnMade", index);
+    } else {
+      alert("not your turn");
+    }
+  } else {
+    alert("turn undefined ");
+  }
+}
+
+//Draw the board everytime get boardState
+function putX(cellNumber) {
+  const newImg = document.createElement("img");
+  newImg.src = "./img/close.svg";
+  newImg.className = "cell-x";
+  boardCells[cellNumber].appendChild(newImg);
+}
+
+function putO(cellNumber) {
+  const newImg = document.createElement("img");
+  newImg.src = "./img/rec.svg";
+  newImg.className = "cell-o";
+  boardCells[cellNumber].appendChild(newImg);
+}
+
+function handleBoardState(serverBoardState) {
+  boardState = Array.from(serverBoardState);
+
+  //Print the grid acc to boardState
+  boardState.forEach((cell, index) => {
+    if (boardCells[index].hasChildNodes()) {
+      return;
+    }
+    if (cell == 1) {
+      putX(index);
+    } else if (cell == 2) {
+      putO(index);
+    }
+  });
+}
+
+//Sets turn got from server
+
+function handlexoturn(turn) {
+  console.log("New turn " + turn);
+  currentTurn = turn;
 }
 
 //Display room code

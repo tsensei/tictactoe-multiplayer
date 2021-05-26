@@ -8,12 +8,14 @@ const io = require("socket.io")({
 //Global object for board states and user/room lookup table
 let boardState = {};
 const clientRooms = {};
+let turn = {};
 
 //Client connect aftermath
 io.on("connection", (client) => {
   console.log("connected");
   client.on("newGame", handleNewGame);
   client.on("joinGame", handleJoinGame);
+  client.on("turnMade", handleTurnMade);
 
   //Join p1 to the room
   function handleNewGame() {
@@ -53,7 +55,22 @@ io.on("connection", (client) => {
 
     client.emit("gameCode", code);
 
-    console.log(boardState);
+    turn[code] = Math.round(Math.random(0, 1)) == 0 ? 1 : 2;
+
+    io.sockets.in(code).emit("xoturn", turn[code]);
+  }
+
+  function handleTurnMade(index) {
+    const roomName = clientRooms[client.id];
+    const boardArr = boardState[roomName];
+    if (boardArr[index] == undefined) {
+      boardArr[index] = client.number;
+      turn[roomName] = turn[roomName] == 1 ? 2 : 1;
+      io.sockets.in(roomName).emit("xoturn", turn[roomName]);
+      io.sockets.in(roomName).emit("boardState", boardState[roomName]);
+    } else {
+      console.log("already selected");
+    }
   }
 });
 

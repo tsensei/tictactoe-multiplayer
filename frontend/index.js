@@ -1,5 +1,5 @@
 //Connect to server
-const socket = io("http://localhost:8080");
+const socket = io("https://sleepy-caverns-91483.herokuapp.com/");
 
 //Unique player number
 var playerNumber,

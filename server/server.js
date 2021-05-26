@@ -145,4 +145,4 @@ function makeid(length) {
 }
 
 //Server port init
-io.listen(8080);
+io.listen(process.env.PORT || 8080);

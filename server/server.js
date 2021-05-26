@@ -9,6 +9,17 @@ const io = require("socket.io")({
 let boardState = {};
 const clientRooms = {};
 let turn = {};
+//All possible combination for winning
+const winCombinations = [
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
 //Client connect aftermath
 io.on("connection", (client) => {
@@ -18,7 +29,7 @@ io.on("connection", (client) => {
   client.on("turnMade", handleTurnMade);
 
   //Join p1 to the room
-  function handleNewGame() {
+  function handleNewGame(name) {
     //generates a roomid
     let roomName = makeid(5);
     clientRooms[client.id] = roomName;
@@ -62,17 +73,46 @@ io.on("connection", (client) => {
 
   function handleTurnMade(index) {
     const roomName = clientRooms[client.id];
+    console.log(boardState[roomName]);
     const boardArr = boardState[roomName];
-    if (boardArr[index] == undefined) {
-      boardArr[index] = client.number;
-      turn[roomName] = turn[roomName] == 1 ? 2 : 1;
+    boardState[roomName][index] = client.number;
+    let currentTurn = turn[roomName];
+    if (checkForWin(boardArr, currentTurn)) {
+      io.sockets.in(roomName).emit("winner", currentTurn);
+    } else if (checkForDraw(boardArr)) {
+      io.sockets.in(roomName).emit("draw");
+    } else {
+      turn[roomName] = currentTurn == 1 ? 2 : 1;
       io.sockets.in(roomName).emit("xoturn", turn[roomName]);
       io.sockets.in(roomName).emit("boardState", boardState[roomName]);
-    } else {
-      console.log("already selected");
     }
   }
 });
+
+//Checks if someone won
+function checkForWin(boardArr, currentTurn) {
+  console.log("called");
+  console.log(boardArr);
+  return winCombinations.some((combination) => {
+    return combination.every((c) => {
+      if (boardArr[c] === currentTurn) {
+        return true;
+      }
+
+      return false;
+    });
+  });
+}
+
+//Checks if board is full ,then draw
+function checkForDraw(boardArr) {
+  return boardArr.every((c) => {
+    if (c != undefined) {
+      return true;
+    }
+    return false;
+  });
+}
 
 //Sets all 9 cell value to undefined
 function initGame() {

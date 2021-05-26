@@ -1,5 +1,5 @@
 //Setting up socket server
-const io = require("socket.io")({
+const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*",
   },

@@ -15,13 +15,25 @@
   </head>
   <body>
     <div id="login-container">
-      <button id="newGameButton">New Game</button>
-      <div>or</div>
-      <input type="text" id="joinCode" />
-      <button id="joinGameButton">Join Game</button>
+      <header>TicTacToe</header>
+      <div class="button-group">
+        <label for="userName">Enter your name:</label>
+        <input type="text" id="userName" required />
+
+        <label for="joinCode">Use a room id:</label>
+        <input type="text" id="joinCode" placeholder="From a friend" required />
+        <button type="submit" id="joinGameButton">Join Game</button>
+        <div>OR</div>
+        <button id="newGameButton">Start a new game</button>
+      </div>
+      <footer>
+        Made with ❤️️ by
+        <a href="https://www.instagram.com/_tsensei_/">tsensei</a>
+      </footer>
     </div>
     <div id="game-container">
       <div>Your game code is: <span id="gameCodeDisplay"></span></div>
+      <div id="playerTurn"></div>
       <div class="board-container">
         <div class="board-cell"></div>
         <div class="board-cell"></div>

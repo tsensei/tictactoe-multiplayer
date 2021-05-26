@@ -2,8 +2,11 @@
 const socket = io("http://localhost:8080");
 
 //Unique player number
-var playerNumber, currentTurn;
-let boardState = [];
+var playerNumber,
+  currentPlayer,
+  currentTurn,
+  boardUpdated = true;
+let boardState = Array.apply(null, Array(9)).map(function () {});
 
 //Response on Socket Event
 socket.on("init", (number) => {
@@ -14,6 +17,8 @@ socket.on("xoturn", handlexoturn);
 socket.on("unknownGame", handleUnknownGame);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 socket.on("boardState", handleBoardState);
+socket.on("winner", handleWinner);
+socket.on("draw", handleDraw);
 
 //Reference to DOM objects
 const loginContainer = document.getElementById("login-container");
@@ -24,16 +29,20 @@ const joinCodeInput = document.getElementById("joinCode");
 const joinBtn = document.getElementById("joinGameButton");
 const gameCodeDisplay = document.getElementById("gameCodeDisplay");
 const boardCells = document.querySelectorAll(".board-cell");
+const userName = document.getElementById("userName");
+const playerTurn = document.getElementById("playerTurn");
 
 //Initialize game when button clicked
 newBtn.addEventListener("click", () => {
-  socket.emit("newGame");
+  const name = userName.value;
+  socket.emit("newGame", name);
   init();
 });
 
 joinBtn.addEventListener("click", () => {
+  const name = userName.value;
   const code = joinCodeInput.value;
-  socket.emit("joinGame", code);
+  socket.emit("joinGame", code, name);
   init();
 });
 
@@ -58,25 +67,24 @@ function initializeGame() {
 
   //Adds click evt listener to each cell
   boardCells.forEach((cell, index) => {
-    cell.addEventListener(
-      "click",
-      () => {
-        validateClickSendRes(index);
-      },
-      { once: true }
-    );
+    cell.addEventListener("click", () => {
+      validateClickSendRes(index);
+    });
   });
 }
 
 function validateClickSendRes(index) {
-  if (currentTurn != undefined) {
+  if (currentTurn != undefined && boardUpdated) {
     if (playerNumber == currentTurn) {
-      socket.emit("turnMade", index);
+      if (boardState[index] == undefined || boardState[index] == null) {
+        socket.emit("turnMade", index);
+        boardUpdated = false;
+      } else {
+        alert("already selected");
+      }
     } else {
       alert("not your turn");
     }
-  } else {
-    alert("turn undefined ");
   }
 }
 
@@ -96,6 +104,9 @@ function putO(cellNumber) {
 }
 
 function handleBoardState(serverBoardState) {
+  if (serverBoardState.length == 0) {
+    return;
+  }
   boardState = Array.from(serverBoardState);
 
   //Print the grid acc to boardState
@@ -109,13 +120,16 @@ function handleBoardState(serverBoardState) {
       putO(index);
     }
   });
+
+  boardUpdated = true;
 }
 
 //Sets turn got from server
 
-function handlexoturn(turn) {
-  console.log("New turn " + turn);
+function handlexoturn(turn, player) {
   currentTurn = turn;
+  currentPlayer = player;
+  playerTurn.innerText = currentPlayer + "'s turn";
 }
 
 //Display room code
@@ -125,14 +139,24 @@ function handleGameCode(code) {
 
 //Wrong game code
 function handleUnknownGame() {
-  reset();
   alert("Unknown Game!");
 }
 
 //Player limit exceeded
 function handleTooManyPlayers() {
-  reset();
   alert("Too many players!");
+}
+
+function handleWinner(num) {
+  if (num == playerNumber) {
+    alert(currentPlayer + " is the winner!");
+  }
+  reset();
+}
+
+function handleDraw() {
+  alert("This is a draw!");
+  reset();
 }
 
 //resets to default
@@ -142,4 +166,5 @@ function reset() {
   gameCodeDisplay.innerText = "";
   loginContainer.style.display = "flex";
   gameContainer.style.display = "none";
+  boardState = Array.apply(null, Array(9)).map(function () {});
 }

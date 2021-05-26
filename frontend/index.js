@@ -148,9 +148,7 @@ function handleTooManyPlayers() {
 }
 
 function handleWinner(num) {
-  if (num == playerNumber) {
-    alert(currentPlayer + " is the winner!");
-  }
+  alert(currentPlayer + " is the winner!");
   reset();
 }
 

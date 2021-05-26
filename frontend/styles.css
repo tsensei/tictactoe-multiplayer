@@ -1,0 +1,91 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat&display=swap");
+
+*,
+*::after,
+*::before {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Montserrat", sans-serif;
+}
+
+#login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#login-container > * {
+  margin: 0.4rem 0;
+}
+
+#game-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  display: none;
+}
+
+#game-container > * {
+  margin: 1rem 0;
+}
+
+.board-container {
+  width: 80vw;
+  height: 80vw;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.board-cell {
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cell-x {
+  height: 60%;
+  width: 60%;
+}
+
+.cell-o {
+  height: 67%;
+  width: 67%;
+}
+
+.board-cell:nth-child(1),
+.board-cell:nth-child(2),
+.board-cell:nth-child(3) {
+  border-top: none;
+}
+
+.board-cell:nth-child(1),
+.board-cell:nth-child(4),
+.board-cell:nth-child(7) {
+  border-left: none;
+}
+
+.board-cell:nth-child(3),
+.board-cell:nth-child(6),
+.board-cell:nth-child(9) {
+  border-right: none;
+}
+
+.board-cell:nth-child(7),
+.board-cell:nth-child(8),
+.board-cell:nth-child(9) {
+  border-bottom: none;
+}
+
+@media only screen and (min-width: 600px) {
+  .board-container {
+    width: 331px;
+    height: 331px;
+  }
+}

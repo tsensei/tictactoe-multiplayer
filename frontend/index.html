@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script
+      src="https://cdn.socket.io/4.1.1/socket.io.min.js"
+      integrity="sha384-cdrFIqe3RasCMNE0jeFG9xJHog/tgOVC1E9Lzve8LQN1g5WUHo0Kvk1mawWjxX7a"
+      crossorigin="anonymous"
+    ></script>
+    <script defer src="./index.js"></script>
+  </head>
+  <body>
+    <div id="login-container">
+      <button id="newGameButton">New Game</button>
+      <div>or</div>
+      <input type="text" id="joinCode" />
+      <button id="joinGameButton">Join Game</button>
+    </div>
+    <div id="game-container">
+      <div>Your game code is: <span id="gameCodeDisplay"></span></div>
+      <div class="board-container">
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+        <div class="board-cell"></div>
+      </div>
+    </div>
+  </body>
+</html>

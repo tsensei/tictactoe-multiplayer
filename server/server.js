@@ -90,9 +90,11 @@ io.on("connection", (client) => {
     boardState[roomName][index] = client.number;
     let currentTurn = turn[roomName];
     if (checkForWin(boardArr, currentTurn)) {
+      io.sockets.in(roomName).emit("boardState", boardState[roomName]);
       io.sockets.in(roomName).emit("winner", currentTurn);
       clearData(roomName, client);
     } else if (checkForDraw(boardArr)) {
+      io.sockets.in(roomName).emit("boardState", boardState[roomName]);
       io.sockets.in(roomName).emit("draw");
       clearData(roomName, client);
     } else {

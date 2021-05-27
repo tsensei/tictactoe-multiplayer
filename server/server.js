@@ -1,7 +1,8 @@
 //Setting up socket server
+const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "https://xenodochial-shockley-c8e243.netlify.app",
+    origin: "*",
   },
 });
 

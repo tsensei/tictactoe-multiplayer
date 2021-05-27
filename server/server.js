@@ -75,8 +75,6 @@ io.on("connection", (client) => {
 
     client.emit("gameCode", code);
 
-    io.sockets.in(code).emit("startGame");
-
     turn[code] = Math.round(Math.random(0, 1)) == 0 ? 1 : 2;
 
     io.sockets
@@ -91,10 +89,8 @@ io.on("connection", (client) => {
     let currentTurn = turn[roomName];
     if (checkForWin(boardArr, currentTurn)) {
       io.sockets.in(roomName).emit("winner", currentTurn);
-      clearData(roomName, client);
     } else if (checkForDraw(boardArr)) {
       io.sockets.in(roomName).emit("draw");
-      clearData(roomName, client);
     } else {
       turn[roomName] = currentTurn == 1 ? 2 : 1;
       io.sockets
@@ -111,17 +107,14 @@ io.on("connection", (client) => {
   function handleDisconnect() {
     const roomName = clientRooms[client.id];
     io.sockets.in(roomName).emit("exitGame");
-    clearData(roomName, client);
+
+    delete boardState.roomName;
+    delete nameByRoom.roomName;
+    delete clientRooms[client.id];
+    delete turn[roomName];
   }
 });
 
-//Clears room data and additionals
-function clearData(roomName, client) {
-  delete boardState[roomName];
-  delete nameByRoom[roomName];
-  delete clientRooms[client.id];
-  delete turn[roomName];
-}
 //Checks if someone won
 function checkForWin(boardArr, currentTurn) {
   return winCombinations.some((combination) => {

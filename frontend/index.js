@@ -134,7 +134,9 @@ function handleBoardState(serverBoardState) {
 function handlexoturn(turn, player) {
   currentTurn = turn;
   currentPlayer = player;
-  playerTurn.innerText = currentPlayer + "'s turn";
+  if (currentPlayer != undefined) {
+    playerTurn.innerText = currentPlayer + "'s turn";
+  }
 }
 
 //Display room code
@@ -170,9 +172,12 @@ function handleExitGame() {
 //resets to default
 function reset() {
   playerNumber = null;
-  joinCodeInput.value = "";
   gameCodeDisplay.innerText = "";
-  loginContainer.style.display = "flex";
+  currentPlayer = undefined;
   gameContainer.style.display = "none";
+  loginContainer.style.display = "flex";
+  joinCodeInput.value = "";
+  userName.value = "";
+
   boardState = Array.apply(null, Array(9)).map(function () {});
 }

@@ -10,7 +10,8 @@ var playerNumber,
   currentPlayer,
   currentTurn,
   p2joined = false,
-  boardUpdated = true;
+  boardUpdated = true,
+  gameRunning = false;
 let boardState = Array.apply(null, Array(9)).map(function () {});
 
 //Response on Socket Event
@@ -143,6 +144,7 @@ function handlexoturn(turn, player) {
 
 function handleStartGame() {
   p2joined = true;
+  gameRunning = true;
 }
 
 //Display room code
@@ -161,22 +163,31 @@ function handleTooManyPlayers() {
 }
 
 function handleWinner(num) {
-  alert(currentPlayer + " is the winner!");
-  reset();
+  playerTurn.innerText = currentPlayer + " is the winner";
+
+  setTimeout(() => {
+    reset();
+  }, 2000);
 }
 
 function handleDraw() {
-  alert("This is a draw!");
-  reset();
+  playerTurn.innerText = "This is a draw";
+  setTimeout(() => {
+    reset();
+  }, 2000);
 }
 
 function handleExitGame() {
+  if (!gameRunning) {
+    return;
+  }
   alert("A player has left the room");
   reset();
 }
 
 //resets to default
 function reset() {
+  gameRunning = false;
   playerNumber = null;
   gameCodeDisplay.innerText = "";
   playerTurn.innerText = "";

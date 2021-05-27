@@ -98,6 +98,10 @@
   display: none;
 }
 
+#playerTurn {
+  font-size: 2rem;
+}
+
 #game-container > * {
   margin: 1rem 0;
 }

@@ -3,6 +3,7 @@ const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*",
+    allowedHeaders: ["Access-Control-Allow-Origin"],
   },
 });
 

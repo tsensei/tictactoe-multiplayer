@@ -17,7 +17,6 @@ let boardState = Array.apply(null, Array(9)).map(function () {});
 //Response on Socket Event
 socket.on("init", (number) => {
   playerNumber = number;
-  init();
 });
 socket.on("gameCode", handleGameCode);
 socket.on("xoturn", handlexoturn);
@@ -45,12 +44,14 @@ const playerTurn = document.getElementById("playerTurn");
 newBtn.addEventListener("click", () => {
   const name = userName.value;
   socket.emit("newGame", name);
+  init();
 });
 
 joinBtn.addEventListener("click", () => {
   const name = userName.value;
   const code = joinCodeInput.value;
   socket.emit("joinGame", code, name);
+  init();
 });
 
 //Initialization function

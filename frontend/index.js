@@ -23,6 +23,7 @@ socket.on("tooManyPlayers", handleTooManyPlayers);
 socket.on("boardState", handleBoardState);
 socket.on("winner", handleWinner);
 socket.on("draw", handleDraw);
+socket.on("exitGame", handleExitGame);
 
 //Reference to DOM objects
 const loginContainer = document.getElementById("login-container");
@@ -158,6 +159,11 @@ function handleWinner(num) {
 
 function handleDraw() {
   alert("This is a draw!");
+  reset();
+}
+
+function handleExitGame() {
+  alert("A player has left the room");
   reset();
 }
 

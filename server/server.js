@@ -29,6 +29,7 @@ io.on("connection", (client) => {
   client.on("newGame", handleNewGame);
   client.on("joinGame", handleJoinGame);
   client.on("turnMade", handleTurnMade);
+  client.on("disconnect", handleDisconnect);
 
   //Join p1 to the room
   function handleNewGame(name) {
@@ -101,6 +102,16 @@ io.on("connection", (client) => {
         );
       io.sockets.in(roomName).emit("boardState", boardState[roomName]);
     }
+  }
+
+  function handleDisconnect() {
+    const roomName = clientRooms[client.id];
+    io.sockets.in(roomName).emit("exitGame");
+
+    delete boardState.roomName;
+    delete nameByRoom.roomName;
+    delete clientRooms[client.id];
+    delete turn[roomName];
   }
 });
 

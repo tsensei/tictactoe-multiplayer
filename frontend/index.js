@@ -1,24 +1,35 @@
 //Connect to server
 const socket = io("https://sleepy-caverns-91483.herokuapp.com/", {
   extraHeaders: {
-    "Access-Control-Allow-Origin":
-      "https://xenodochial-shockley-c8e243.netlify.app",
+    "Access-Control-Allow-Origin": "*",
   },
 });
+
+//For testing
+
+// const socket = io("http://localhost:8080", {
+//   extraHeaders: {
+//     "Access-Control-Allow-Origin": "*",
+//   },
+// });
 
 //Unique player number
 var playerNumber,
   currentPlayer,
   currentTurn,
-  boardUpdated = true;
+  p2joined = false,
+  boardUpdated = true,
+  gameRunning = false;
 let boardState = Array.apply(null, Array(9)).map(function () {});
 
 //Response on Socket Event
 socket.on("init", (number) => {
   playerNumber = number;
+  init();
 });
 socket.on("gameCode", handleGameCode);
 socket.on("xoturn", handlexoturn);
+socket.on("startGame", handleStartGame);
 socket.on("unknownGame", handleUnknownGame);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 socket.on("boardState", handleBoardState);
@@ -42,20 +53,17 @@ const playerTurn = document.getElementById("playerTurn");
 newBtn.addEventListener("click", () => {
   const name = userName.value;
   socket.emit("newGame", name);
-  init();
 });
 
 joinBtn.addEventListener("click", () => {
   const name = userName.value;
   const code = joinCodeInput.value;
   socket.emit("joinGame", code, name);
-  init();
 });
 
 //Initialization function
 function init() {
   boardState = [];
-  gameCodeDisplay.innerText = "";
   loginContainer.style.display = "none";
   gameContainer.style.display = "flex";
   initializeGame();
@@ -86,10 +94,10 @@ function validateClickSendRes(index) {
         socket.emit("turnMade", index);
         boardUpdated = false;
       } else {
-        alert("already selected!");
+        alert("already selected");
       }
     } else {
-      alert("not your turn!");
+      alert("not your turn");
     }
   }
 }
@@ -135,9 +143,14 @@ function handleBoardState(serverBoardState) {
 function handlexoturn(turn, player) {
   currentTurn = turn;
   currentPlayer = player;
-  if (currentPlayer != undefined) {
+  if (p2joined) {
     playerTurn.innerText = currentPlayer + "'s turn";
   }
+}
+
+function handleStartGame() {
+  p2joined = true;
+  gameRunning = true;
 }
 
 //Display room code
@@ -156,29 +169,38 @@ function handleTooManyPlayers() {
 }
 
 function handleWinner(num) {
-  alert(currentPlayer + " is the winner!");
-  reset();
+  playerTurn.innerText = currentPlayer + " is the winner";
+
+  setTimeout(() => {
+    reset();
+  }, 2000);
 }
 
 function handleDraw() {
-  alert("This is a draw!");
-  reset();
+  playerTurn.innerText = "This is a draw";
+  setTimeout(() => {
+    reset();
+  }, 2000);
 }
 
 function handleExitGame() {
+  if (!gameRunning) {
+    return;
+  }
   alert("A player has left the room");
   reset();
 }
 
 //resets to default
 function reset() {
+  gameRunning = false;
   playerNumber = null;
   gameCodeDisplay.innerText = "";
+  playerTurn.innerText = "";
   currentPlayer = undefined;
   gameContainer.style.display = "none";
   loginContainer.style.display = "flex";
   joinCodeInput.value = "";
   userName.value = "";
-
   boardState = Array.apply(null, Array(9)).map(function () {});
 }

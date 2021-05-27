@@ -9,6 +9,7 @@ const socket = io("https://sleepy-caverns-91483.herokuapp.com/", {
 var playerNumber,
   currentPlayer,
   currentTurn,
+  p2joined = false,
   boardUpdated = true;
 let boardState = Array.apply(null, Array(9)).map(function () {});
 
@@ -18,6 +19,7 @@ socket.on("init", (number) => {
 });
 socket.on("gameCode", handleGameCode);
 socket.on("xoturn", handlexoturn);
+socket.on("startGame", handleStartGame);
 socket.on("unknownGame", handleUnknownGame);
 socket.on("tooManyPlayers", handleTooManyPlayers);
 socket.on("boardState", handleBoardState);
@@ -134,9 +136,13 @@ function handleBoardState(serverBoardState) {
 function handlexoturn(turn, player) {
   currentTurn = turn;
   currentPlayer = player;
-  if (currentPlayer != undefined) {
+  if (p2joined) {
     playerTurn.innerText = currentPlayer + "'s turn";
   }
+}
+
+function handleStartGame() {
+  p2joined = true;
 }
 
 //Display room code
@@ -173,11 +179,11 @@ function handleExitGame() {
 function reset() {
   playerNumber = null;
   gameCodeDisplay.innerText = "";
+  playerTurn.innerText = "";
   currentPlayer = undefined;
   gameContainer.style.display = "none";
   loginContainer.style.display = "flex";
   joinCodeInput.value = "";
   userName.value = "";
-
   boardState = Array.apply(null, Array(9)).map(function () {});
 }

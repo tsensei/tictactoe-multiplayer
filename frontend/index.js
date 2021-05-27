@@ -1,5 +1,9 @@
 //Connect to server
-const socket = io("https://sleepy-caverns-91483.herokuapp.com/");
+const socket = io("https://sleepy-caverns-91483.herokuapp.com/", {
+  extraHeaders: {
+    "Access-Control-Allow-Origin": "*",
+  },
+});
 
 //Unique player number
 var playerNumber,

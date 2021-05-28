@@ -1,15 +1,26 @@
 //Setting up socket server
 const express = require("express");
 const app = express();
+
+const cors = require("cors");
+app.use(cors());
+
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "*",
+    origins: ["*"],
+
+    handlePreflightRequest: (req, res) => {
+      res.writeHead(200, {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET,POST",
+        "Access-Control-Allow-Headers": "my-custom-header",
+        "Access-Control-Allow-Credentials": true,
+      });
+      res.end();
+    },
   },
 });
-const cors = require("cors");
-
-app.use(cors());
 
 //Global object for board states and user/room lookup table
 let boardState = {};
@@ -171,4 +182,5 @@ function makeid(length) {
 }
 
 //Server port init
-io.listen(process.env.PORT || 8080);
+httpServer.listen(process.env.PORT || 8080);
+// io.listen(process.env.PORT || 8080);

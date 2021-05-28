@@ -1,7 +1,8 @@
 //Connect to server
 const socket = io("https://sleepy-caverns-91483.herokuapp.com/", {
   extraHeaders: {
-    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Origin":
+      "https://tictactoe-multiplayer-tsensei.netlify.app/",
   },
 });
 

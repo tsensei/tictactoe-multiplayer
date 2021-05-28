@@ -1,11 +1,15 @@
 //Setting up socket server
+const express = require("express");
+const app = express();
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*",
-    allowedHeaders: ["Access-Control-Allow-Origin"],
   },
 });
+const cors = require("cors");
+
+app.use(cors());
 
 //Global object for board states and user/room lookup table
 let boardState = {};
@@ -38,8 +42,6 @@ io.on("connection", (client) => {
     let roomName = makeid(5);
     clientRooms[client.id] = roomName;
     client.emit("gameCode", roomName);
-    console.log(name);
-    console.log(roomName);
 
     boardState[roomName] = initGame();
 

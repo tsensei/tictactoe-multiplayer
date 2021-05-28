@@ -94,10 +94,10 @@ function validateClickSendRes(index) {
         socket.emit("turnMade", index);
         boardUpdated = false;
       } else {
-        alert("already selected!");
+        alert("already selected!!");
       }
     } else {
-      alert("not your turn!");
+      alert("not your turn!!");
     }
   }
 }

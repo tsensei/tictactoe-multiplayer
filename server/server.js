@@ -1,10 +1,3 @@
-//Setting up socket server
-const express = require("express");
-const app = express();
-
-const cors = require("cors");
-app.use(cors());
-
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {

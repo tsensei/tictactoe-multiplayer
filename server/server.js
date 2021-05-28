@@ -8,7 +8,7 @@ app.use(cors());
 const httpServer = require("http").createServer();
 const io = require("socket.io")(httpServer, {
   cors: {
-    origin: "https://tictactoe-multiplayer-tsensei.netlify.app/",
+    origin: "*",
     methods: ["GET", "PUT", "POST"],
     allowedHeaders: ["Access-Control-Allow-Origin"],
   },
